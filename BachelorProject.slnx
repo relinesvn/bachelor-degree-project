@@ -3,5 +3,6 @@
     <Platform Name="x64" />
     <Platform Name="x86" />
   </Configurations>
-  <Project Path="BachelorProject/BachelorProject.vcxproj" />
+  <Folder Name="/Элементы решения/" />
+  <Project Path="BachelorProject/BachelorProject.vcxproj" Id="5d7fd364-152d-4d00-b679-3427a8b23f8b" />
 </Solution>

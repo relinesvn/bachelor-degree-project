@@ -14,9 +14,9 @@ int main()
 	float sdNAGR[N], sdGAZ[N], sdW[N];// ���������� ������
 	//float TW=10,TNAGR=20,TGAZ=10,dt=1,kW=10,kNAGR=20,kGAZ=5,wW[N],wNAGR[N],wGAZ[N],sdI[N],sdH[N],sl;
 	//float TW=1,TNAGR=2,TGAZ=1,dt=1,kW=10,kNAGR=20,kGAZ=5,wW[N],wNAGR[N],wGAZ[N],sdI[N],sdH[N],sl;
-	float TW = 1, TNAGR = 2, TGAZ = 1, dt = 1, kW = 10, kNAGR = 20, kGAZ = 5, wW[N], wNAGR[N], wGAZ[N], sdI[N], sdH[N], sl;
+	float TW = 1, TNAGR = 2, TGAZ = 1, dt = 1, kW = 10, kNAGR = 20, kGAZ = 5, wW[N], wNAGR[N], wGAZ[N], sl;
 	long NN, i, j;
-	float sigma_W = 0.05, sigma_NAGR = 0.05, sigma_GAZ = 5, stpar = 0, stpar2 = 0;
+	float sigma_W = 0.05f, sigma_NAGR = 0.05f, sigma_GAZ = 5.0f, stpar = 0.0f, stpar2 = 0.0f;
 	float   dtpar, mtpar, Dtpar, sig_tpar;
 	fopen_s(&p1, "tpar.rez", "a");
 	puts("Input NN=");
@@ -46,16 +46,16 @@ int main()
 		}
 		sl = 0;
 		for (i = 0; i < 12; i++)
-			sl += rand() / 32767.;
-		sdGAZ[N - 1] = sigma_GAZ * (sl - 6);//��������� �����.���������� ����
+			sl += rand() / 32767.0f;
+		sdGAZ[N - 1] = sigma_GAZ * (sl - 6.0f);//��������� �����.���������� ����
 		sl = 0;
 		for (i = 0; i < 12; i++)
-			sl += rand() / 32767.;
-		sdNAGR[N - 1] = sigma_NAGR * (sl - 6);//��������� �����. ������������
+			sl += rand() / 32767.0f;
+		sdNAGR[N - 1] = sigma_NAGR * (sl - 6.0f);//��������� �����. ������������
 		sl = 0;
 		for (i = 0; i < 12; i++)
-			sl += rand() / 32767.;
-		sdW[N - 1] = sigma_W * (sl - 6);// ��������� �����. ������� ���������
+			sl += rand() / 32767.0f;
+		sdW[N - 1] = sigma_W * (sl - 6.0f);// ��������� �����. ������� ���������
 
 		// ���������� ���������� ����������� ���� ����� ���� 3-� ������� 
 		dtpar = svertka(sdGAZ, wGAZ, N) + svertka(sdNAGR, wNAGR, N) + svertka(sdW, wW, N);
@@ -69,7 +69,12 @@ int main()
 	{
 		sig_tpar = sqrt(Dtpar);
 		printf("mpar=%f sig_tpar=%f\n", mtpar, sig_tpar);
-		fprintf(p1, "NN=%li mpar=%f sig_tpar=%f\n", NN, mtpar, sig_tpar);
+
+		// Перевіряємо, чи файл успішно відкрито, перш ніж писати в нього
+		if (p1 != NULL)
+		{
+			fprintf(p1, "NN=%li mpar=%f sig_tpar=%f\n", NN, mtpar, sig_tpar);
+		}
 	}
 	else
 		puts("Dtpar<0\n");

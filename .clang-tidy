@@ -1,0 +1,8 @@
+---
+Checks: '-*,readability-*,modernize-*,performance-*,bugprone-*'
+WarningsAsErrors: ''
+HeaderFilterRegex: ''
+CheckOptions:
+  - key:             readability-magic-numbers.IgnoredIntegerValues
+    value:           '1,2,3,4,60' # Ігноруємо ваші константи, наприклад N=60
+...
