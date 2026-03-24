@@ -2,16 +2,17 @@
 //
 
 #include <iostream>
-#include<stdio.h>
-#include<math.h>
-#include<stdlib.h>
-#define N 60
-float svertka(float x[], float w[], int n);
+#include <cstdio>
+#include <cmath>
+#include <cstdlib>
+
+const int N = 60;
+float svertka(const float x[], const float w[], int n);
 //*************************************************************
 int main()
 {
 	FILE* p1;
-	float sdNAGR[N], sdGAZ[N], sdW[N];// ���������� ������
+	float sdNAGR[N], sdGAZ[N], sdW[N];//  
 	//float TW=10,TNAGR=20,TGAZ=10,dt=1,kW=10,kNAGR=20,kGAZ=5,wW[N],wNAGR[N],wGAZ[N],sdI[N],sdH[N],sl;
 	//float TW=1,TNAGR=2,TGAZ=1,dt=1,kW=10,kNAGR=20,kGAZ=5,wW[N],wNAGR[N],wGAZ[N],sdI[N],sdH[N],sl;
 	float TW = 1, TNAGR = 2, TGAZ = 1, dt = 1, kW = 10, kNAGR = 20, kGAZ = 5, wW[N], wNAGR[N], wGAZ[N], sl;
@@ -28,65 +29,72 @@ int main()
 		sdW[i] = 0;
 	}
 	//   wI[N]
-	for (i = 0; i < N; i++)
-		wW[i] = (kW / TW) * exp(-i * dt / TW);
+	for (i = 0; i < N; i++) {
+		wW[i] = (kW / TW) * exp(-(float)i * dt / TW);
+	}
 	//wH[N]
-	for (i = 0; i < N; i++)
-		wNAGR[i] = (kNAGR / TNAGR) * exp(-i * dt / TNAGR);
-	for (i = 0; i < N; i++)
-		wGAZ[i] = (kGAZ / TGAZ) * exp(-i * dt / TGAZ);
+	for (i = 0; i < N; i++) {
+		wNAGR[i] = (kNAGR / TNAGR) * exp(-(float)i * dt / TNAGR);
+	}
+	for (i = 0; i < N; i++) {
+		wGAZ[i] = (kGAZ / TGAZ) * exp(-(float)i * dt / TGAZ);
+	}
 	//w2[i]=(k/(root*Ty))*exp(-i*dt*root/Ty)*sin(root*i*dt/Ty);
-	for (j = 0; j < NN - 1; j++)// ������� �����������
+	for (j = 0; j < NN - 1; j++)//  
 	{
-		for (i = 0; i < N - 1; i++)// ���� ������ ��� ��������� ����� N �������
+		for (i = 0; i < N - 1; i++)//      N 
 		{
 			sdGAZ[i] = sdGAZ[i + 1];
 			sdNAGR[i] = sdNAGR[i + 1];
 			sdW[i] = sdW[i + 1];
 		}
 		sl = 0;
-		for (i = 0; i < 12; i++)
-			sl += rand() / 32767.0f;
-		sdGAZ[N - 1] = sigma_GAZ * (sl - 6.0f);//��������� �����.���������� ����
+		for (i = 0; i < 12; i++) {
+			sl += (float)rand() / 32767.0f;
+		}
+		sdGAZ[N - 1] = sigma_GAZ * (sl - 6.0f);// . 
 		sl = 0;
-		for (i = 0; i < 12; i++)
-			sl += rand() / 32767.0f;
-		sdNAGR[N - 1] = sigma_NAGR * (sl - 6.0f);//��������� �����. ������������
+		for (i = 0; i < 12; i++) {
+			sl += (float)rand() / 32767.0f;
+		}
+		sdNAGR[N - 1] = sigma_NAGR * (sl - 6.0f);// . 
 		sl = 0;
-		for (i = 0; i < 12; i++)
-			sl += rand() / 32767.0f;
-		sdW[N - 1] = sigma_W * (sl - 6.0f);// ��������� �����. ������� ���������
+		for (i = 0; i < 12; i++) {
+			sl += (float)rand() / 32767.0f;
+		}
+		sdW[N - 1] = sigma_W * (sl - 6.0f);//  .  
 
-		// ���������� ���������� ����������� ���� ����� ���� 3-� ������� 
+		//       3-  
 		dtpar = svertka(sdGAZ, wGAZ, N) + svertka(sdNAGR, wNAGR, N) + svertka(sdW, wW, N);
 		stpar += dtpar;
-		stpar2 += pow(dtpar, 2);
+		stpar2 += (dtpar * dtpar);
 	}
-	//���������� ���. ������., ������� �� �.�.�. ��� �����. ������. ����.
-	mtpar = stpar / NN;
-	Dtpar = (stpar2 - stpar * stpar / NN) / (NN - 1);
+	// . .,   ...  . . .
+	mtpar = stpar / (float)NN;
+	Dtpar = (stpar2 - stpar * stpar / (float)NN) / (float)(NN - 1);
 	if (Dtpar >= 0)
 	{
 		sig_tpar = sqrt(Dtpar);
 		printf("mpar=%f sig_tpar=%f\n", mtpar, sig_tpar);
 
 		// Перевіряємо, чи файл успішно відкрито, перш ніж писати в нього
-		if (p1 != NULL)
+		if (p1 != nullptr)
 		{
 			fprintf(p1, "NN=%li mpar=%f sig_tpar=%f\n", NN, mtpar, sig_tpar);
 		}
 	}
-	else
+	else {
 		puts("Dtpar<0\n");
+	}
 	puts("Finish!");
 }
 //**********************************************
-float svertka(float x[], float w[], int n)
+float svertka(const float x[], const float w[], int n)
 {
 	float s = 0;
 	int i;
-	for (i = 0; i < n; i++)
+	for (i = 0; i < n; i++) {
 		s += w[i] * x[n - 1 - i];
+	}
 	return s;
 }
-

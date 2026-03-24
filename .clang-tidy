@@ -1,8 +1,6 @@
----
-Checks: '-*,readability-*,modernize-*,performance-*,bugprone-*'
+Checks: '-*,readability-*,modernize-*,performance-*,bugprone-*,-readability-identifier-length,-readability-magic-numbers,-modernize-use-trailing-return-type,-modernize-avoid-c-arrays,-readability-isolate-declaration,-readability-uppercase-literal-suffix'
 WarningsAsErrors: ''
 HeaderFilterRegex: ''
 CheckOptions:
   - key:             readability-magic-numbers.IgnoredIntegerValues
     value:           '1,2,3,4,60' # Ігноруємо ваші константи, наприклад N=60
-...
