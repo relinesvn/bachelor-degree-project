@@ -4,7 +4,7 @@ echo === Бакалаврський проєкт (DEV ENV) ===
 echo [1/2] Збірка у режимі Debug...
 
 :: Переходимо в корінь проєкту і запускаємо компіляцію
-msbuild ..\..\BachelorProject.sln /p:Configuration=Debug /p:Platform=x64
+msbuild ..\..\BachelorProject.slnx /p:Configuration=Debug /p:Platform=x64
 
 if %ERRORLEVEL% NEQ 0 (
     echo.
