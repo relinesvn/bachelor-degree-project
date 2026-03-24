@@ -18,7 +18,7 @@ jobs:
       uses: microsoft/setup-msbuild@v1.1
 
     - name: Build Debug Configuration
-      run: msbuild BachelorProject.sln /p:Configuration=Debug /p:Platform=x64
+      run: msbuild BachelorProject.slnx /p:Configuration=Debug /p:Platform=x64
 
     - name: Build Release Configuration
-      run: msbuild BachelorProject.sln /p:Configuration=Release /p:Platform=x64
+      run: msbuild BachelorProject.slnx /p:Configuration=Release /p:Platform=x64
