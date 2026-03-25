@@ -1,0 +1,11 @@
+PROJECT_NAME           = "BachelorProject"
+PROJECT_BRIEF          = "Математичне моделювання та обробка сигналів"
+OUTPUT_DIRECTORY       = docs_output
+INPUT                  = BachelorProject
+RECURSIVE              = YES
+GENERATE_HTML          = YES
+GENERATE_LATEX         = NO
+OUTPUT_LANGUAGE        = Ukrainian
+WARN_AS_ERROR          = YES
+EXTRACT_ALL            = YES
+OPTIMIZE_OUTPUT_FOR_C  = YES
