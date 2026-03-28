@@ -81,36 +81,43 @@ $(function() {
 </div><!--header-->
 <div class="contents">
 
-<p>Головний файл бакалаврського проєкту для математичного моделювання.  
+<p>Оптимізована версія математичного модуля з APM моніторингом.  
 <a href="#details">Детальніше...</a></p>
 <div class="textblock"><code>#include &lt;iostream&gt;</code><br />
 <code>#include &lt;cstdio&gt;</code><br />
 <code>#include &lt;cmath&gt;</code><br />
 <code>#include &lt;cstdlib&gt;</code><br />
+<code>#include &lt;chrono&gt;</code><br />
+<code>#include &lt;random&gt;</code><br />
+<code>#include &lt;cstring&gt;</code><br />
 </div><div class="textblock"><div class="dynheader">
 Діаграма включених заголовочних файлів для BachelorProject.cpp:</div>
 <div class="dyncontent">
 <div class="center"><img src="BachelorProject_8cpp__incl.png" border="0" usemap="#aBachelorProject_2BachelorProject_8cpp" alt=""/></div>
 <map name="aBachelorProject_2BachelorProject_8cpp" id="aBachelorProject_2BachelorProject_8cpp">
-<area shape="rect" title="Головний файл бакалаврського проєкту для математичного моделювання." alt="" coords="90,5,275,45"/>
+<area shape="rect" title="Оптимізована версія математичного модуля з APM моніторингом." alt="" coords="222,5,407,45"/>
 <area shape="rect" title=" " alt="" coords="5,93,85,119"/>
-<area shape="poly" title=" " alt="" coords="151,48,79,89,76,84,148,43"/>
+<area shape="poly" title=" " alt="" coords="251,48,98,92,97,87,249,43"/>
 <area shape="rect" title=" " alt="" coords="109,93,171,119"/>
-<area shape="poly" title=" " alt="" coords="175,47,155,83,150,80,170,44"/>
+<area shape="poly" title=" " alt="" coords="274,48,179,90,177,85,272,43"/>
 <area shape="rect" title=" " alt="" coords="195,93,258,119"/>
-<area shape="poly" title=" " alt="" coords="196,44,216,80,211,83,191,47"/>
+<area shape="poly" title=" " alt="" coords="295,48,252,86,248,82,292,44"/>
 <area shape="rect" title=" " alt="" coords="282,93,347,119"/>
-<area shape="poly" title=" " alt="" coords="216,43,284,84,282,88,213,48"/>
+<area shape="poly" title=" " alt="" coords="317,46,317,79,312,79,312,46"/>
+<area shape="rect" title=" " alt="" coords="372,93,439,119"/>
+<area shape="poly" title=" " alt="" coords="338,44,383,82,380,86,335,48"/>
+<area shape="rect" title=" " alt="" coords="463,93,535,119"/>
+<area shape="poly" title=" " alt="" coords="360,43,460,85,458,90,358,48"/>
+<area shape="rect" title=" " alt="" coords="559,93,625,119"/>
+<area shape="poly" title=" " alt="" coords="382,43,546,89,545,94,380,48"/>
 </map>
 </div>
 </div><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="func-members" name="func-members"></a>
 Функції</h2></td></tr>
 <tr class="memitem:a64f2adf8832601695ae91ee7236d2439" id="r_a64f2adf8832601695ae91ee7236d2439"><td class="memItemLeft" align="right" valign="top">float&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="BachelorProject_8cpp.html#a64f2adf8832601695ae91ee7236d2439">svertka</a> (const float x[], const float w[], int n)</td></tr>
-<tr class="memdesc:a64f2adf8832601695ae91ee7236d2439"><td class="mdescLeft">&#160;</td><td class="mdescRight">Обчислює дискретну згортку двох сигналів.  <br /></td></tr>
 <tr class="separator:a64f2adf8832601695ae91ee7236d2439"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ae66f6b31b5ad750f1fe042a706a4e3d4" id="r_ae66f6b31b5ad750f1fe042a706a4e3d4"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="BachelorProject_8cpp.html#ae66f6b31b5ad750f1fe042a706a4e3d4">main</a> ()</td></tr>
-<tr class="memdesc:ae66f6b31b5ad750f1fe042a706a4e3d4"><td class="mdescLeft">&#160;</td><td class="mdescRight">Головна точка входу в програму.  <br /></td></tr>
 <tr class="separator:ae66f6b31b5ad750f1fe042a706a4e3d4"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="var-members" name="var-members"></a>
@@ -119,15 +126,7 @@ $(function() {
 <tr class="separator:ab2b6b0c222cd1ce70d6a831f57241e59"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Детальний опис</h2>
-<div class="textblock"><p>Головний файл бакалаврського проєкту для математичного моделювання. </p>
-<ul>
-<li>Цей файл містить реалізацію математичної моделі, яка генерує шумові сигнали (навантаження, газ, вплив) та виконує їх згортку з відповідними ваговими функціями.</li>
-<li><b>Архітектурні рішення:</b> Програма працює як монолітний CLI-додаток. Результати серіалізуються безпосередньо у файлову систему (<code>tpar.rez</code>).</li>
-<li><b>Бізнес-логіка:</b> Розрахунок середнього значення (mpar) та середньоквадратичного відхилення (sig_tpar) на основі згенерованих випадкових вибірок.</li>
-<li><dl class="section author"><dt>Автор</dt><dd>Іващев Родіон </dd></dl>
-<dl class="section date"><dt>Дата</dt><dd>2026 </dd></dl>
-</li>
-</ul>
+<div class="textblock"><p>Оптимізована версія математичного модуля з APM моніторингом. </p>
 </div><h2 class="groupheader">Опис функцій</h2>
 <a id="ae66f6b31b5ad750f1fe042a706a4e3d4" name="ae66f6b31b5ad750f1fe042a706a4e3d4"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#ae66f6b31b5ad750f1fe042a706a4e3d4">&#9670;&#160;</a></span>main()</h2>
@@ -143,23 +142,6 @@ $(function() {
         </tr>
       </table>
 </div><div class="memdoc">
-
-<p>Головна точка входу в програму. </p>
-<ul>
-<li><b>Взаємодія компонентів:</b></li>
-</ul>
-<ol type="1">
-<li>Зчитування кількості ітерацій <code>NN</code> від користувача.</li>
-<li>Ініціалізація експоненційних вагових функцій (<code>wW</code>, <code>wNAGR</code>, <code>wGAZ</code>).</li>
-<li>Головний цикл Монте-Карло: генерація гауссівського шуму методом центральної граничної теореми (додавання 12 рівномірно розподілених випадкових чисел) та їхня подальша згортка.</li>
-<li>Запис результатів у файл <code>tpar.rez</code>.</li>
-</ol>
-<ul>
-<li><dl class="section warning"><dt>Застереження</dt><dd>Якщо дисперсія (<code>Dtpar</code>) виявиться від'ємною (що теоретично неможливо через формулу, але можливо через похибки float), програма видасть помилку.</dd></dl>
-</li>
-<li><dl class="section return"><dt>Повертає</dt><dd>int Код завершення програми (0 - успіх). </dd></dl>
-</li>
-</ul>
 
 </div>
 </div>
@@ -194,21 +176,6 @@ $(function() {
         </tr>
       </table>
 </div><div class="memdoc">
-
-<p>Обчислює дискретну згортку двох сигналів. </p>
-<ul>
-<li><b>Алгоритм (Важкий для розуміння):</b> Функція виконує операцію дискретної згортки (convolution) вхідного сигналу <code>x</code> з ваговою функцією <code>w</code>. Елементи масиву <code>x</code> беруться у зворотному порядку <code>x[n - 1 - i]</code>, що імітує "перевертання" сигналу на осі часу, як це вимагається в класичній цифровій обробці сигналів (DSP).</li>
-<li><dl class="params"><dt>Аргументи</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">x</td><td>Масив вхідного сигналу (шуму). </td></tr>
-    <tr><td class="paramname">w</td><td>Масив вагової функції (імпульсної характеристики). </td></tr>
-    <tr><td class="paramname">n</td><td>Кількість елементів для обробки (зазвичай N). </td></tr>
-  </table>
-  </dd>
-</dl>
-<dl class="section return"><dt>Повертає</dt><dd>float Результат згортки (одне число) для поточної ітерації. </dd></dl>
-</li>
-</ul>
 
 </div>
 </div>
