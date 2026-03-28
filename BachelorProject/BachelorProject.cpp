@@ -1,148 +1,102 @@
 ﻿/**
  * @file BachelorProject.cpp
- * @brief Головний файл бакалаврського проєкту для математичного моделювання.
- * * @details Цей файл містить реалізацію математичної моделі, яка генерує
- * шумові сигнали (навантаження, газ, вплив) та виконує їх згортку з
- * відповідними ваговими функціями.
- * * **Архітектурні рішення:**
- * Програма працює як монолітний CLI-додаток. Результати серіалізуються
- * безпосередньо у файлову систему (`tpar.rez`).
- * * **Бізнес-логіка:**
- * Розрахунок середнього значення (mpar) та середньоквадратичного
- * відхилення (sig_tpar) на основі згенерованих випадкових вибірок.
- * * @author Іващев Родіон
- * @date 2026
+ * @brief Оптимізована версія математичного модуля з APM моніторингом.
  */
 
 #include <iostream>
 #include <cstdio>
 #include <cmath>
 #include <cstdlib>
+#include <chrono>   // Для APM моніторингу
+#include <random>   // Для оптимізованої генерації чисел
+#include <cstring>  // Для std::memmove
 
- /** * @def N
-  * @brief Розмірність масивів для зберігання вибірок сигналів та вагових функцій.
-  */
 const int N = 60;
 
-/**
- * @brief Обчислює дискретну згортку двох сигналів.
- * * @details **Алгоритм (Важкий для розуміння):**
- * Функція виконує операцію дискретної згортки (convolution) вхідного сигналу `x`
- * з ваговою функцією `w`. Елементи масиву `x` беруться у зворотному порядку
- * `x[n - 1 - i]`, що імітує "перевертання" сигналу на осі часу, як це вимагається
- * в класичній цифровій обробці сигналів (DSP).
- * * @param x Масив вхідного сигналу (шуму).
- * @param w Масив вагової функції (імпульсної характеристики).
- * @param n Кількість елементів для обробки (зазвичай N).
- * @return float Результат згортки (одне число) для поточної ітерації.
- */
 float svertka(const float x[], const float w[], int n);
 
-//*************************************************************
-
-/**
- * @brief Головна точка входу в програму.
- * * @details **Взаємодія компонентів:**
- * 1. Зчитування кількості ітерацій `NN` від користувача.
- * 2. Ініціалізація експоненційних вагових функцій (`wW`, `wNAGR`, `wGAZ`).
- * 3. Головний цикл Монте-Карло: генерація гауссівського шуму методом
- * центральної граничної теореми (додавання 12 рівномірно розподілених
- * випадкових чисел) та їхня подальша згортка.
- * 4. Запис результатів у файл `tpar.rez`.
- * * @warning Якщо дисперсія (`Dtpar`) виявиться від'ємною (що теоретично неможливо
- * через формулу, але можливо через похибки float), програма видасть помилку.
- * * @return int Код завершення програми (0 - успіх).
- */
 int main()
 {
-	FILE* p1;
-	float sdNAGR[N], sdGAZ[N], sdW[N];
-	float TW = 1, TNAGR = 2, TGAZ = 1, dt = 1, kW = 10, kNAGR = 20, kGAZ = 5, wW[N], wNAGR[N], wGAZ[N], sl;
-	long NN, i, j;
-	float sigma_W = 0.05f, sigma_NAGR = 0.05f, sigma_GAZ = 5.0f, stpar = 0.0f, stpar2 = 0.0f;
-	float   dtpar, mtpar, Dtpar, sig_tpar;
+    FILE* p1;
+    float sdNAGR[N], sdGAZ[N], sdW[N];
+    float TW = 1, TNAGR = 2, TGAZ = 1, dt = 1, kW = 10, kNAGR = 20, kGAZ = 5, wW[N], wNAGR[N], wGAZ[N];
+    long NN, i, j;
+    float sigma_W = 0.05f, sigma_NAGR = 0.05f, sigma_GAZ = 5.0f, stpar = 0.0f, stpar2 = 0.0f;
+    float dtpar, mtpar, Dtpar, sig_tpar;
 
-	fopen_s(&p1, "tpar.rez", "a");
-	puts("Input NN=");
-	scanf_s("%li", &NN);
+    // Ініціалізація оптимізованого генератора випадкових чисел (Mersenne Twister)
+    std::random_device rd;
+    std::mt19937 gen(rd());
+    std::normal_distribution<float> normal_dist(0.0f, 1.0f);
 
-	for (i = 0; i < N; i++)
-	{
-		sdGAZ[i] = 0;
-		sdNAGR[i] = 0;
-		sdW[i] = 0;
-	}
+    fopen_s(&p1, "tpar.rez", "a");
+    puts("Input NN (test sizes: 10000, 100000, 1000000)=");
+    scanf_s("%li", &NN);
 
-	for (i = 0; i < N; i++) {
-		wW[i] = (kW / TW) * exp(-(float)i * dt / TW);
-	}
+    for (i = 0; i < N; i++) {
+        sdGAZ[i] = 0; sdNAGR[i] = 0; sdW[i] = 0;
+    }
 
-	for (i = 0; i < N; i++) {
-		wNAGR[i] = (kNAGR / TNAGR) * exp(-(float)i * dt / TNAGR);
-	}
-	for (i = 0; i < N; i++) {
-		wGAZ[i] = (kGAZ / TGAZ) * exp(-(float)i * dt / TGAZ);
-	}
+    for (i = 0; i < N; i++) {
+        wW[i] = (kW / TW) * exp(-(float)i * dt / TW);
+        wNAGR[i] = (kNAGR / TNAGR) * exp(-(float)i * dt / TNAGR);
+        wGAZ[i] = (kGAZ / TGAZ) * exp(-(float)i * dt / TGAZ);
+    }
 
-	for (j = 0; j < NN - 1; j++)
-	{
-		for (i = 0; i < N - 1; i++)
-		{
-			sdGAZ[i] = sdGAZ[i + 1];
-			sdNAGR[i] = sdNAGR[i + 1];
-			sdW[i] = sdW[i + 1];
-		}
+    // --- ПОЧАТОК APM МОНІТОРИНГУ ПРОДУКТИВНОСТІ ---
+    auto start_time = std::chrono::high_resolution_clock::now();
 
-		sl = 0;
-		for (i = 0; i < 12; i++) {
-			sl += (float)rand() / 32767.0f;
-		}
-		sdGAZ[N - 1] = sigma_GAZ * (sl - 6.0f);
+    for (j = 0; j < NN - 1; j++)
+    {
+        // Оптимізація пам'яті: використання memmove замість циклу for (швидше копіювання блоків)
+        std::memmove(sdGAZ, sdGAZ + 1, (N - 1) * sizeof(float));
+        std::memmove(sdNAGR, sdNAGR + 1, (N - 1) * sizeof(float));
+        std::memmove(sdW, sdW + 1, (N - 1) * sizeof(float));
 
-		sl = 0;
-		for (i = 0; i < 12; i++) {
-			sl += (float)rand() / 32767.0f;
-		}
-		sdNAGR[N - 1] = sigma_NAGR * (sl - 6.0f);
+        // Оптимізація алгоритму: швидка генерація за допомогою std::normal_distribution
+        sdGAZ[N - 1] = sigma_GAZ * normal_dist(gen);
+        sdNAGR[N - 1] = sigma_NAGR * normal_dist(gen);
+        sdW[N - 1] = sigma_W * normal_dist(gen);
 
-		sl = 0;
-		for (i = 0; i < 12; i++) {
-			sl += (float)rand() / 32767.0f;
-		}
-		sdW[N - 1] = sigma_W * (sl - 6.0f);
+        dtpar = svertka(sdGAZ, wGAZ, N) + svertka(sdNAGR, wNAGR, N) + svertka(sdW, wW, N);
+        stpar += dtpar;
+        stpar2 += (dtpar * dtpar);
+    }
 
-		dtpar = svertka(sdGAZ, wGAZ, N) + svertka(sdNAGR, wNAGR, N) + svertka(sdW, wW, N);
-		stpar += dtpar;
-		stpar2 += (dtpar * dtpar);
-	}
+    // --- КІНЕЦЬ APM МОНІТОРИНГУ ---
+    auto end_time = std::chrono::high_resolution_clock::now();
+    std::chrono::duration<double, std::milli> execution_time = end_time - start_time;
 
-	mtpar = stpar / (float)NN;
-	Dtpar = (stpar2 - stpar * stpar / (float)NN) / (float)(NN - 1);
+    mtpar = stpar / (float)NN;
+    Dtpar = (stpar2 - stpar * stpar / (float)NN) / (float)(NN - 1);
 
-	if (Dtpar >= 0)
-	{
-		sig_tpar = sqrt(Dtpar);
-		printf("mpar=%f sig_tpar=%f\n", mtpar, sig_tpar);
+    if (Dtpar >= 0)
+    {
+        sig_tpar = sqrt(Dtpar);
+        printf("\n--- PERFORMANCE REPORT (APM) ---\n");
+        printf("Iterations (NN): %li\n", NN);
+        printf("Execution time: %.2f ms\n", execution_time.count());
+        printf("Speed: %.0f iter/sec\n", (NN / execution_time.count()) * 1000);
+        printf("--------------------------------\n");
+        printf("Result: mpar=%f sig_tpar=%f\n", mtpar, sig_tpar);
 
-		if (p1 != nullptr)
-		{
-			fprintf(p1, "NN=%li mpar=%f sig_tpar=%f\n", NN, mtpar, sig_tpar);
-		}
-	}
-	else {
-		puts("Dtpar<0\n");
-	}
-	puts("Finish!");
-	return 0;
+        if (p1 != nullptr) {
+            fprintf(p1, "[APM: %.2f ms] NN=%li mpar=%f sig_tpar=%f\n", execution_time.count(), NN, mtpar, sig_tpar);
+        }
+    }
+    else {
+        puts("Dtpar<0\n");
+    }
+    puts("Finish!");
+    return 0;
 }
 
-//**********************************************
 float svertka(const float x[], const float w[], int n)
 {
-	float s = 0;
-	int i;
-	for (i = 0; i < n; i++) {
-		s += w[i] * x[n - 1 - i];
-	}
-	return s;
+    float s = 0;
+    // Оптимізація: розгортання циклу (Loop Unrolling) компілятором буде ефективнішим
+    for (int i = 0; i < n; i++) {
+        s += w[i] * x[n - 1 - i];
+    }
+    return s;
 }
